@@ -1,0 +1,57 @@
+# Compilation files
+*.dirstamp
+*.o
+*.obj
+*.orig
+*.Po
+*.LOG
+
+# Autotool files
+aclocal.m4
+autom4te.cache/**
+compile
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+m4/**
+Makefile
+Makefile.in
+missing
+stamp-h1
+
+# Library directory
+lib/boost_*/**
+lib/*.bz2
+lib/*.zip
+lib/*.7z
+
+# QT Creator temporary files
+*.autosave
+*.user
+*.txt.user.*
+*.user
+
+
+#CMAKE FILES
+CMakeLists.txt.user
+*_CPack*
+*CMakeFiles*
+*.cmake
+*install_manifest.txt
+*CMakeCache.txt
+
+# Python cache files
+*.pyc
+venv/
+.idea/
+
+GTest coverage
+*.gcda
+*.gcno
+*test_coverage*
+
+Misc files
+*.info
+
