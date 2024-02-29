@@ -5,7 +5,7 @@ set (SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 
 
 set (ALL_SOURCES
-    ${SRC_DIR}/main.c
+    ${SRC_DIR}/main.cpp
     ${SRC_DIR}/common/defines.h
     ${SRC_DIR}/common/sleep.h
     ${SRC_DIR}/common/utils.c

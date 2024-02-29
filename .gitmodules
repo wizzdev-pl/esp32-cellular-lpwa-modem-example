@@ -1,7 +1,7 @@
 [submodule "externals/esp-idf"]
 	path = externals/esp-idf
 	url = https://github.com/espressif/esp-idf.git
-	branch = release/v4.4
+	branch = release/v5.1.2
 [submodule "externals/googletest"]
 	path = externals/googletest
 	url = https://github.com/google/googletest.git
