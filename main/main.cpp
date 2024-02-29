@@ -7,7 +7,17 @@ static const char* LOG_TAG = "Main";
 #include "sleep.h"
 
 
-void app_main(void)
+void run(void);
+
+extern "C"
+{
+    void app_main(void)
+    {
+        run();
+    }
+}
+
+void run(void)
 {
     LOG_INFO("Hello from main!");
 

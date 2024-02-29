@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 
 project(esp32_test_on_pc)
-set(BASE_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../src/")
+set(BASE_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../main/")
 set(TEST_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Test files - independent from the main project sources
