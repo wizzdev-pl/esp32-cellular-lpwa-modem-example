@@ -55,3 +55,6 @@ GTest coverage
 Misc files
 *.info
 
+.peru
+externals
+build
