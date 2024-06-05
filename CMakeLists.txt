@@ -10,6 +10,10 @@ set(EXTRA_COMPONENT_DIRS app/ ${ESP_ADDITIONAL_COMPONENTS})
 set(IDF_CMAKE ${CMAKE_SOURCE_DIR}/app/externals/esp-idf/tools/cmake/project.cmake)
 # set(IDF_CMAKE $ENV{IDF_PATH}/tools/cmake/project.cmake)  # TODO - check if should replace the command above
 
+if (DEFINED ENV{IDF_PATH})
+    set(IDF_PATH $ENV{IDF_PATH})
+    set(ENV{IDF_COMPONENT_MANAGER} 1)
+endif()
 include(${IDF_CMAKE})
 
 # option(BUILD_WITH_PRINTS_AND_LOGS "Enable printing log messages" OFF)

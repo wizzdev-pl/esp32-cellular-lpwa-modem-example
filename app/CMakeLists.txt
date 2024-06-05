@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 
-set (SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set (SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 
 set (ALL_SOURCES
@@ -29,6 +29,7 @@ set(COMPONENT_REQUIRES
     lwip
     bt
     esp_eth
+    esp_modem
     )
 
 set(COMPONENT_PRIV_REQUIRES)
