@@ -7,11 +7,11 @@ set(SUPPORTED_TARGETS esp32)
 
 set(EXTRA_COMPONENT_DIRS main/ ${ESP_ADDITIONAL_COMPONENTS})
 
-set(IDF_CMAKE ${CMAKE_SOURCE_DIR}/externals/esp-idf/tools/cmake/project.cmake)
+set(IDF_CMAKE ${CMAKE_SOURCE_DIR}/app/externals/esp-idf/tools/cmake/project.cmake)
 # set(IDF_CMAKE $ENV{IDF_PATH}/tools/cmake/project.cmake)  # TODO - check if should replace the command above
 
 include(${IDF_CMAKE})
 
 # option(BUILD_WITH_PRINTS_AND_LOGS "Enable printing log messages" OFF)
 
-project(pockethernet_esp32)
+project(esp32-cellular-lpwa-modem-example)
