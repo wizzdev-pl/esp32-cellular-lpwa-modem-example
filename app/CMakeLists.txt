@@ -12,12 +12,17 @@ set (ALL_SOURCES
     ${SRC_DIR}/common/utils.h
     ${SRC_DIR}/common/error_codes.c
     ${SRC_DIR}/common/error_codes.h
+    ${SRC_DIR}/connectivity/lpwa_communication_controller/lpwa_communication_controller.cpp
+    ${SRC_DIR}/connectivity/lpwa_communication_controller/lpwa_communication_controller.h
+    ${SRC_DIR}/hardware/hardware_definitions.h
     )
 
 
 set (ALL_INCLUDE_DIRS
     ${SRC_DIR}/
     ${SRC_DIR}/common/
+    ${SRC_DIR}/connectivity/lpwa_communication_controller
+    ${SRC_DIR}/hardware/
     )
 
 
