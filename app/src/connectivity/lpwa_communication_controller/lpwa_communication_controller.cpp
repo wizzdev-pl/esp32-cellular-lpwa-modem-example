@@ -54,6 +54,8 @@ void LpwaCommunicationController::ipEventCallback(void *arg, esp_event_base_t ev
         LOG_INFO("Name Server 1: " IPSTR, IP2STR(&dnsInfo.ip.u_addr.ip4));
         LOG_INFO("Name Server 2: " IPSTR, IP2STR(&dnsInfo.ip.u_addr.ip4));
         LOG_INFO("-------------------------------");
+
+        m_simpleMqttClientController.runTask();
     }
     else if (event_id == IP_EVENT_PPP_LOST_IP)
     {
