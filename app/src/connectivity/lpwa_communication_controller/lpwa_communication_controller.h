@@ -8,11 +8,17 @@
 class LpwaCommunicationController
 {
     constexpr static char *APN_NAME = "internet.gma.iot";
+    constexpr static int GPIO_LEVEL_HIGH = 1;
+    constexpr static int GPIO_LEVEL_LOW = 0;
 
 public:
     void init();
 
 private:
+    void powerKeyGpioInit();
+    void modulePowerOn();
+    void modemNetworkConfiguration();
+
     esp_modem_dte_config_t m_dteConfig;
     std::shared_ptr<esp_modem::DTE> m_dte;
     esp_modem_dce_config_t m_dceConfig;
