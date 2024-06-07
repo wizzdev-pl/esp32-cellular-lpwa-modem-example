@@ -11,9 +11,24 @@ extern "C"
 
 class LpwaCommunicationController
 {
-    constexpr static char *APN_NAME = "internet.gma.iot";
+    constexpr static char APN_NAME[] = "internet.gma.iot";
     constexpr static int GPIO_LEVEL_HIGH = 1;
     constexpr static int GPIO_LEVEL_LOW = 0;
+
+    constexpr static int LPWA_UART_BAUDRATE = 115200;
+    constexpr static uart_word_length_t LPWA_UART_DATABITS = UART_DATA_8_BITS;
+    constexpr static uart_stop_bits_t LPWA_UART_STOP_BITS = UART_STOP_BITS_1;
+    constexpr static uart_parity_t LPWA_UART_PARITY = UART_PARITY_DISABLE;
+    constexpr static esp_modem_flow_ctrl_t LPWA_UART_FLOW_CONTROL = ESP_MODEM_FLOW_CONTROL_NONE;
+    constexpr static int LPWA_UART_QUEUE_SIZE = 30;
+    constexpr static int LPWA_UART_RX_BUFFER_SIZE = 4096;
+    constexpr static int LPWA_UART_TX_BUFFER_SIZE = 512;
+
+    constexpr static int LPWA_DTE_STACK_SIZE = 6144;
+    constexpr static int LPWA_DTE_BUFFER_SIZE = 512;
+
+    constexpr static int LPWA_NO_SIGNAL_VALUE = 99;
+    constexpr static int LPWA_WEAK_SIGNAL_VALUE = 9;
 
 public:
     void runTask();
@@ -27,7 +42,6 @@ public:
 private:
     void powerKeyGpioInit();
     void modulePowerOn();
-    void modemNetworkConfiguration();
     void perform();
 
     TaskHandle_t m_taskHandle;

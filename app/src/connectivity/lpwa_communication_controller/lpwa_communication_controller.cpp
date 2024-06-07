@@ -125,19 +125,19 @@ void LpwaCommunicationController::init()
     m_dteConfig.uart_config.tx_io_num = hardware::LPWA_MODULE_UART_RXD_PIN;
     m_dteConfig.uart_config.rx_io_num = hardware::LPWA_MODULE_UART_TXD_PIN;
     m_dteConfig.uart_config.port_num = UART_NUM_1;
-    m_dteConfig.uart_config.baud_rate = 115200;
+    m_dteConfig.uart_config.baud_rate = LPWA_UART_BAUDRATE;
     m_dteConfig.uart_config.source_clk = ESP_MODEM_DEFAULT_UART_CLK;
-    m_dteConfig.uart_config.data_bits = UART_DATA_8_BITS;
-    m_dteConfig.uart_config.stop_bits = UART_STOP_BITS_1;
-    m_dteConfig.uart_config.parity = UART_PARITY_DISABLE;
-    m_dteConfig.uart_config.flow_control = ESP_MODEM_FLOW_CONTROL_NONE;
-    m_dteConfig.uart_config.event_queue_size = 30;
-    m_dteConfig.uart_config.rx_buffer_size = 4096;
-    m_dteConfig.uart_config.tx_buffer_size = 512;
+    m_dteConfig.uart_config.data_bits = LPWA_UART_DATABITS;
+    m_dteConfig.uart_config.stop_bits = LPWA_UART_STOP_BITS;
+    m_dteConfig.uart_config.parity = LPWA_UART_PARITY;
+    m_dteConfig.uart_config.flow_control = LPWA_UART_FLOW_CONTROL;
+    m_dteConfig.uart_config.event_queue_size = LPWA_UART_QUEUE_SIZE;
+    m_dteConfig.uart_config.rx_buffer_size = LPWA_UART_RX_BUFFER_SIZE;
+    m_dteConfig.uart_config.tx_buffer_size = LPWA_UART_TX_BUFFER_SIZE;
 
-    m_dteConfig.task_stack_size = 6144;
-    m_dteConfig.task_priority = 5;
-    m_dteConfig.dte_buffer_size = 512;
+    m_dteConfig.task_stack_size = LPWA_DTE_STACK_SIZE;
+    m_dteConfig.task_priority = DEFAULT_TASK_PRIORITY;
+    m_dteConfig.dte_buffer_size = LPWA_DTE_BUFFER_SIZE;
 
     m_dte = esp_modem::create_uart_dte(&m_dteConfig);
     if (!m_dte)
@@ -148,6 +148,7 @@ void LpwaCommunicationController::init()
 
     m_dceConfig = ESP_MODEM_DCE_DEFAULT_CONFIG(APN_NAME);
 
+    // we are using driver for SIM7070, most of the commands are compatible with SIM7080
     m_dce = esp_modem::create_SIM7070_dce(&m_dceConfig, m_dte, esp_netif);
     if (!m_dce)
     {
@@ -169,7 +170,7 @@ void LpwaCommunicationController::init()
 
     // Network Configuration
 
-    if (m_dce->set_baud(115200) == esp_modem::command_result::OK)
+    if (m_dce->set_baud(LPWA_UART_BAUDRATE) == esp_modem::command_result::OK)
     {
         LOG_INFO("Baud rate set correctly");
     }
@@ -198,7 +199,7 @@ void LpwaCommunicationController::init()
         LOG_INFO("Received response to signal quality check, RSSI: %d, BER: %d", rssiValue, bitErrorRate);
     }
 
-    if ((rssiValue == 99) || (rssiValue < 9))
+    if ((rssiValue == LPWA_NO_SIGNAL_VALUE) || (rssiValue < LPWA_WEAK_SIGNAL_VALUE))
     {
         LOG_ERROR("Weak signal, stopping configuration");
         return;
@@ -247,24 +248,4 @@ void LpwaCommunicationController::modulePowerOn()
     SLEEP_MS(5000);
 
     LOG_INFO("Power on procedure finished");
-}
-
-void LpwaCommunicationController::modemNetworkConfiguration()
-{
-    if (m_dce == nullptr)
-    {
-        LOG_ERROR("DCE not initialized");
-        return;
-    }
-
-    // set baudrate
-
-    if (m_dce->set_baud(115200) == esp_modem::command_result::OK)
-    {
-        LOG_INFO("Baud rate set correctly");
-    }
-    else
-    {
-        LOG_ERROR("Could not set baudrate");
-    }
 }
