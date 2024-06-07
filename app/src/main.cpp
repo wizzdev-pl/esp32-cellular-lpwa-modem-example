@@ -21,9 +21,9 @@ void run(void)
 {
     LOG_INFO("Hello from main!");
 
-    LpwaCommunicationController LpwaCommunicationController;
+    LpwaCommunicationController lpwaCommunicationController;
 
-    LpwaCommunicationController.init();
+    lpwaCommunicationController.runTask();
 
     while (1)
     {
