@@ -60,3 +60,4 @@ externals
 build
 
 managed_components
+sdkconfig.old

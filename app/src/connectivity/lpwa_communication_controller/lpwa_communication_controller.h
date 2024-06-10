@@ -11,7 +11,7 @@ extern "C"
 
 class LpwaCommunicationController
 {
-    constexpr static char APN_NAME[] = "internet.gma.iot";
+    // constexpr static char APN_NAME[] = "internet.gma.iot";
     constexpr static int GPIO_LEVEL_HIGH = 1;
     constexpr static int GPIO_LEVEL_LOW = 0;
 

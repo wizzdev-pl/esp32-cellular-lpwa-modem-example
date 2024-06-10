@@ -13,6 +13,7 @@ extern "C"
 #include "esp_netif.h"
 #include "esp_netif_defaults.h"
 #include "esp_netif_ppp.h"
+#include "esp_netif_types.h"
 #include "esp_log.h"
 }
 
@@ -24,13 +25,13 @@ constexpr int lteMBands[] = {3, 20};
 
 void _ipEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = reinterpret_cast<LpwaCommunicationController *>(event_data);
+    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(event_data);
     pLpwaCommunicationControlller->ipEventCallback(arg, event_base, event_id, event_data);
 }
 
 void _pppStatusEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = reinterpret_cast<LpwaCommunicationController *>(event_data);
+    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(event_data);
     pLpwaCommunicationControlller->pppStatusEventCallback(arg, event_base, event_id, event_data);
 }
 
@@ -43,8 +44,8 @@ void LpwaCommunicationController::ipEventCallback(void *arg, esp_event_base_t ev
 
         ip_event_got_ip_t *event = reinterpret_cast<ip_event_got_ip_t *>(event_data);
         esp_netif_t *netif = event->esp_netif;
-        esp_netif_get_dns_info(netif, static_cast<esp_netif_dns_type_t>(0), &dnsInfo);
-        esp_netif_get_dns_info(netif, static_cast<esp_netif_dns_type_t>(1), &dnsInfo);
+        esp_netif_get_dns_info(netif, ESP_NETIF_DNS_MAIN, &dnsInfo);
+        esp_netif_get_dns_info(netif, ESP_NETIF_DNS_BACKUP, &dnsInfo);
 
         LOG_INFO("Modem connection to PPP Server");
         LOG_INFO("-------------------------------");
@@ -68,7 +69,7 @@ void LpwaCommunicationController::pppStatusEventCallback(void *arg, esp_event_ba
 
 void LpwaCommunicationController::runTask()
 {
-    if (xTaskCreate(run, LOG_TAG, 6144, this, 5, &m_taskHandle) != pdPASS)
+    if (xTaskCreate(run, LOG_TAG, DEFAULT_STACK_SIZE, this, DEFAULT_TASK_PRIORITY, &m_taskHandle) != pdPASS)
     {
         LOG_ERROR("Failed to create task: %s", LOG_TAG);
     }
@@ -90,8 +91,11 @@ void LpwaCommunicationController::init()
 {
     esp_netif_init();
 
-    /* Init and register system/core components */
-    esp_event_loop_create_default();
+    // Init and register system/core components
+    if (esp_event_loop_create_default() != ESP_OK)
+    {
+        LOG_ERROR("Error while creating esp_event loop");
+    }
 
     if (esp_event_handler_register(IP_EVENT, ESP_EVENT_ANY_ID, _ipEventCallback, this) != ESP_OK)
     {
@@ -107,13 +111,13 @@ void LpwaCommunicationController::init()
 
     m_eventGroup = xEventGroupCreate();
 
+    // initializing GPIO that's intented to wake up the module
     powerKeyGpioInit();
 
-    /* Configure the PPP netif */
+    // Configure the PPP netif
     esp_netif_config_t netif_ppp_config = ESP_NETIF_DEFAULT_PPP();
 
-    /* Create the PPP and DCE objects */
-
+    // Create the PPP and DCE objects
     esp_netif_t *esp_netif = esp_netif_new(&netif_ppp_config);
     if (!esp_netif)
     {
@@ -169,7 +173,6 @@ void LpwaCommunicationController::init()
     }
 
     // Network Configuration
-
     if (m_dce->set_baud(LPWA_UART_BAUDRATE) == esp_modem::command_result::OK)
     {
         LOG_INFO("Baud rate set correctly");
@@ -190,7 +193,6 @@ void LpwaCommunicationController::init()
     }
 
     // Checking signal
-
     int bitErrorRate = 0;
     int rssiValue = 0;
 
@@ -206,7 +208,6 @@ void LpwaCommunicationController::init()
     }
 
     // entering data mode
-
     LOG_INFO("Entering data mode now");
 
     if (!(m_dce->set_mode(esp_modem::modem_mode::DATA_MODE)))
@@ -240,7 +241,7 @@ void LpwaCommunicationController::modulePowerOn()
 {
     LOG_INFO("Starting SIM7080G powerOn");
 
-    gpio_set_level(hardware::LPWA_MODULE_POWER_KEY, GPIO_LEVEL_HIGH);
+    gpio_set_level(hardware::LPWA_MODULE_POWER_KEY, GPIO_LEVEL_LOW);
     SLEEP_MS(1000);
     gpio_set_level(hardware::LPWA_MODULE_POWER_KEY, GPIO_LEVEL_HIGH);
     SLEEP_MS(2000);
