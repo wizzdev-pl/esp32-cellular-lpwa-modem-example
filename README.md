@@ -111,4 +111,19 @@ idf.py -B ./ -C $PROJECT_DIR/ menuconfig
 ```
 
 # 2. Hardware requirements
+
+- [Pico SIM7080G Cat-M/NB-IoT module](https://www.waveshare.com/wiki/Pico-SIM7080G-Cat-M/NB-IoT)
+- [ESP32-DevKitC-32E](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-devkitc.html)
+- 3.7 - 4.2V power supply
+
+# 3. SIM7080G connection
+
+- VSYS needs to be connected to 3.7 - 4.2 V power supply. 3.3 V seems not to be efficient enough to provide stable power supply for the module
+- GND from power supply and and SIM7080G connected with ESP32 GND pin (next to pin 23)
+- DTR connected to GND (pin on SIM7080G next to DTR can be used)
+- PWR connected to ESP32 GPIO14
+- RXD connected to ESP32 pin 4
+- TXD connected to ESP32 pin 5
+- 3V3 (OUT) connected to ESP32 3V3 pin
+ 
 ...

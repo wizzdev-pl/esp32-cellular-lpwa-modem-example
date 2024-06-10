@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 
-set (SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set (SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 
 set (ALL_SOURCES
@@ -12,12 +12,17 @@ set (ALL_SOURCES
     ${SRC_DIR}/common/utils.h
     ${SRC_DIR}/common/error_codes.c
     ${SRC_DIR}/common/error_codes.h
+    ${SRC_DIR}/connectivity/lpwa_communication_controller/lpwa_communication_controller.cpp
+    ${SRC_DIR}/connectivity/lpwa_communication_controller/lpwa_communication_controller.h
+    ${SRC_DIR}/hardware/hardware_definitions.h
     )
 
 
 set (ALL_INCLUDE_DIRS
     ${SRC_DIR}/
     ${SRC_DIR}/common/
+    ${SRC_DIR}/connectivity/lpwa_communication_controller
+    ${SRC_DIR}/hardware/
     )
 
 
@@ -29,6 +34,7 @@ set(COMPONENT_REQUIRES
     lwip
     bt
     esp_eth
+    esp_modem
     )
 
 set(COMPONENT_PRIV_REQUIRES)
