@@ -69,7 +69,7 @@ void LpwaCommunicationController::pppStatusEventCallback(void *arg, esp_event_ba
 
 void LpwaCommunicationController::runTask()
 {
-    if (xTaskCreate(run, LOG_TAG, DEFAULT_STACK_SIZE, this, DEFAULT_TASK_PRIORITY, &m_taskHandle) != pdPASS)
+    if (xTaskCreate(run, LOG_TAG, DEFAULT_HUGE_STACK_SIZE, this, DEFAULT_TASK_PRIORITY, &m_taskHandle) != pdPASS)
     {
         LOG_ERROR("Failed to create task: %s", LOG_TAG);
     }
@@ -89,7 +89,10 @@ void LpwaCommunicationController::_run()
 
 void LpwaCommunicationController::init()
 {
-    esp_netif_init();
+    if (esp_netif_init() != ESP_OK)
+    {
+        LOG_ERROR("Could not initialize esp_netif");
+    }
 
     // Init and register system/core components
     if (esp_event_loop_create_default() != ESP_OK)
