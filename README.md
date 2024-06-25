@@ -124,4 +124,8 @@ idf.py -B ./ -C $PROJECT_DIR/ menuconfig
 - TXD connected to ESP32 pin 5
 - 3V3 (OUT) connected to ESP32 3V3 pin
  
-...
+## 4. Connection with AWS
+
+In order to connect with AWS, you need to update `AWS_ENDPOINT_URL`, `AWS_THINGNAME`, `AWS_CLIENT_CERTIFICATE` and `AWS_CLIENT_PRIVATE_KEY` in [app/src/connectivity/aws_configuration.h](app/src/connectivity/aws_configuration.h) according to endpoint url and credentials required for the environment you are trying to connect to.
+
+Please note that file is currently not being tracked, updates made in this file should not be pushed to the repository.
