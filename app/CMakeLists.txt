@@ -16,6 +16,7 @@ set (ALL_SOURCES
     ${SRC_DIR}/connectivity/lpwa_communication_controller/lpwa_communication_controller.h
     ${SRC_DIR}/connectivity/simple_mqtt_client_controller/simple_mqtt_client_controller.cpp
     ${SRC_DIR}/connectivity/simple_mqtt_client_controller/simple_mqtt_client_controller.h
+    ${SRC_DIR}/connectivity/aws_configuration.h
 
     ${SRC_DIR}/hardware/hardware_definitions.h
     )
@@ -24,6 +25,7 @@ set (ALL_SOURCES
 set (ALL_INCLUDE_DIRS
     ${SRC_DIR}/
     ${SRC_DIR}/common/
+    ${SRC_DIR}/connectivity
     ${SRC_DIR}/connectivity/lpwa_communication_controller
     ${SRC_DIR}/connectivity/simple_mqtt_client_controller
     ${SRC_DIR}/hardware/
