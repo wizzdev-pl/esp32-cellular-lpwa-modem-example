@@ -16,6 +16,9 @@ if (DEFINED ENV{IDF_PATH})
 endif()
 include(${IDF_CMAKE})
 
+set(APN_NAME "\"internet.gma.iot\"")
+add_definitions(-DAPN_NAME=${APN_NAME})
+
 # option(BUILD_WITH_PRINTS_AND_LOGS "Enable printing log messages" OFF)
 
 project(esp32-cellular-lpwa-modem-example)
