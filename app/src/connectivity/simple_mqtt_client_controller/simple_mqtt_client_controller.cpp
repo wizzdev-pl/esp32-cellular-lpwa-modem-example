@@ -9,7 +9,7 @@ static const char *LOG_TAG = "MQTT-Simple-Client";
 
 void _mqttEventHandler(void *handlerArgs, esp_event_base_t base, int32_t eventId, void *eventData)
 {
-    SimpleMqttClientController *pSimpleMqttClientController = static_cast<SimpleMqttClientController *>(eventData);
+    SimpleMqttClientController *pSimpleMqttClientController = static_cast<SimpleMqttClientController *>(handlerArgs);
     pSimpleMqttClientController->mqttEventHandler(handlerArgs, base, eventId, eventData);
 }
 
@@ -21,6 +21,7 @@ void SimpleMqttClientController::mqttEventHandler(void *handlerArgs, esp_event_b
     {
     case MQTT_EVENT_CONNECTED:
         LOG_INFO("MQTT_EVENT_CONNECTED");
+        xSemaphoreGive(m_semaphoreBrokerConnected);
         break;
     case MQTT_EVENT_DISCONNECTED:
         LOG_INFO("MQTT_EVENT_DISCONNECTED");
@@ -48,8 +49,8 @@ void SimpleMqttClientController::mqttEventHandler(void *handlerArgs, esp_event_b
 }
 
 SimpleMqttClientController::SimpleMqttClientController()
+    : m_semaphoreBrokerConnected(xSemaphoreCreateBinary())
 {
-    m_semaphoreReadyToSubscribe = xSemaphoreCreateBinary();
 }
 
 void SimpleMqttClientController::runTask()
@@ -70,11 +71,6 @@ void SimpleMqttClientController::_run()
 {
     init();
     perform();
-}
-
-void SimpleMqttClientController::setMqttClientReadyToSubscribe()
-{
-    xSemaphoreGive(m_semaphoreReadyToSubscribe);
 }
 
 void SimpleMqttClientController::init()
@@ -117,6 +113,15 @@ void SimpleMqttClientController::perform()
     }
 
     LOG_INFO("Waiting for MQTT client to get connected");
+
+    LOG_INFO("m_semaphoreReadyToSubscribe address: %p", &m_semaphoreBrokerConnected);
+
+    xSemaphoreTake(m_semaphoreBrokerConnected, portMAX_DELAY);
+
+    if (esp_mqtt_client_subscribe(m_clientHandle, "helloWorld", 1) == MQTT_PUBLISH_ERROR)
+    {
+        LOG_ERROR("Error while attempting to subscribe topic");
+    }
 
     if (esp_mqtt_client_publish(m_clientHandle, "helloWorld", "helloFromSIM7080G!", 0, 1, 0) == MQTT_PUBLISH_ERROR)
     {

@@ -24,13 +24,13 @@ constexpr int lteMBands[] = {3, 20};
 
 void _ipEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = reinterpret_cast<LpwaCommunicationController *>(event_data);
+    LpwaCommunicationController *pLpwaCommunicationControlller = reinterpret_cast<LpwaCommunicationController *>(arg);
     pLpwaCommunicationControlller->ipEventCallback(arg, event_base, event_id, event_data);
 }
 
 void _pppStatusEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = reinterpret_cast<LpwaCommunicationController *>(event_data);
+    LpwaCommunicationController *pLpwaCommunicationControlller = reinterpret_cast<LpwaCommunicationController *>(arg);
     pLpwaCommunicationControlller->pppStatusEventCallback(arg, event_base, event_id, event_data);
 }
 

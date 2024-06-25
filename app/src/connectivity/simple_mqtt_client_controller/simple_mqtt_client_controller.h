@@ -27,7 +27,6 @@ public:
     static void run(void *pObject);
     void _run();
     void mqttEventHandler(void *handlerArgs, esp_event_base_t base, int32_t eventId, void *eventData);
-    void setMqttClientReadyToSubscribe();
 
 private:
     void init();
@@ -35,5 +34,5 @@ private:
 
     esp_mqtt_client_handle_t m_clientHandle;
     TaskHandle_t m_taskHandle;
-    SemaphoreHandle_t m_semaphoreReadyToSubscribe;
+    SemaphoreHandle_t m_semaphoreBrokerConnected;
 };
