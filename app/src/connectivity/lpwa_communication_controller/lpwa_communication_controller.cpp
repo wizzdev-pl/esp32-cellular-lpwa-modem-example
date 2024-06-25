@@ -25,13 +25,13 @@ constexpr int lteMBands[] = {3, 20};
 
 void _ipEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(event_data);
+    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(arg);
     pLpwaCommunicationControlller->ipEventCallback(arg, event_base, event_id, event_data);
 }
 
 void _pppStatusEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(event_data);
+    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(arg);
     pLpwaCommunicationControlller->pppStatusEventCallback(arg, event_base, event_id, event_data);
 }
 
@@ -55,6 +55,8 @@ void LpwaCommunicationController::ipEventCallback(void *arg, esp_event_base_t ev
         LOG_INFO("Name Server 1: " IPSTR, IP2STR(&dnsInfo.ip.u_addr.ip4));
         LOG_INFO("Name Server 2: " IPSTR, IP2STR(&dnsInfo.ip.u_addr.ip4));
         LOG_INFO("-------------------------------");
+
+        m_simpleMqttClientController.runTask();
     }
     else if (event_id == IP_EVENT_PPP_LOST_IP)
     {

@@ -1,6 +1,8 @@
 #ifndef D63F93CA_3220_48F0_B31D_F85061E24947
 #define D63F93CA_3220_48F0_B31D_F85061E24947
 
+#include "simple_mqtt_client_controller.h"
+
 extern "C"
 {
 #include "esp_modem_config.h"
@@ -50,6 +52,7 @@ private:
     esp_modem_dce_config_t m_dceConfig;
     std::unique_ptr<esp_modem::DCE> m_dce;
     EventGroupHandle_t m_eventGroup;
+    SimpleMqttClientController m_simpleMqttClientController;
 };
 
 #endif /* D63F93CA_3220_48F0_B31D_F85061E24947 */
