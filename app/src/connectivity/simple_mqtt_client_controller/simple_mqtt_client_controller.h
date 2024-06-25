@@ -6,8 +6,6 @@
 
 class SimpleMqttClientController
 {
-    constexpr static char MQTT_BROKER_ADDRESS[] = "mqtt://0.tcp.eu.ngrok.io";
-
     constexpr static int SIMPLE_MQTT_CONTROLLER_STACK_SIZE = 6144;
 
     constexpr static int MQTT_BUFFER_SIZE        = 4096;
