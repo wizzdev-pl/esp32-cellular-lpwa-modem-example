@@ -8,6 +8,11 @@ static const char* LOG_TAG = "MQTT-Simple-Client";
 #include "esp_event_base.h"
 #include "sleep.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <time.h>
+
 void _mqttEventHandler(void* handlerArgs, esp_event_base_t base, int32_t eventId, void* eventData)
 {
     SimpleMqttClientController* pSimpleMqttClientController = static_cast<SimpleMqttClientController*>(handlerArgs);
@@ -80,6 +85,9 @@ void SimpleMqttClientController::_run()
 
 void SimpleMqttClientController::init()
 {
+    // intializing the seed with current time so that same series of random values will not be drawn every time
+    srand(time(NULL));
+
     esp_mqtt_client_config_t mqttConfig = {};
 
     mqttConfig.broker.address.uri                              = AWS_ENDPOINT_URL;
@@ -143,6 +151,20 @@ void SimpleMqttClientController::perform()
 
     while (true)
     {
-        SLEEP_MS(50);
+        SLEEP_MS(30000);
+        sendTelemetryMessage();
+    }
+}
+
+void SimpleMqttClientController::sendTelemetryMessage()
+{
+    // in telemetry message we are sending randomized value in range -10°C to 40°C
+    int temperature = (rand() % 50) - 10;
+
+    std::string message = "{\"temperature\": " + std::to_string(temperature) + "}";
+
+    if (esp_mqtt_client_publish(m_clientHandle, MQTT_TELEMETRY_TOPIC, message.c_str(), 0, 1, 0) == MQTT_PUBLISH_ERROR)
+    {
+        LOG_ERROR("Could not send telemetry message");
     }
 }
