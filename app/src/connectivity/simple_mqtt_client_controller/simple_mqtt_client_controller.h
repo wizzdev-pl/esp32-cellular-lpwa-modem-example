@@ -6,6 +6,8 @@
 
 class SimpleMqttClientController
 {
+    constexpr static char MQTT_TELEMETRY_TOPIC[] = "telemetry";
+
     constexpr static int SIMPLE_MQTT_CONTROLLER_STACK_SIZE = 6144;
 
     constexpr static int MQTT_BUFFER_SIZE        = 4096;
@@ -26,6 +28,8 @@ public:
 private:
     void init();
     void perform();
+
+    void sendTelemetryMessage();
 
     esp_mqtt_client_handle_t m_clientHandle;
     TaskHandle_t             m_taskHandle;
