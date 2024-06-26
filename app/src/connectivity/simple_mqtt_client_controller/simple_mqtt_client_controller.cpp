@@ -85,6 +85,7 @@ void SimpleMqttClientController::_run()
 
 void SimpleMqttClientController::init()
 {
+    // intializing the seed with current time so that same series of random values will not be drawn every time
     srand(time(NULL));
 
     esp_mqtt_client_config_t mqttConfig = {};
@@ -157,6 +158,7 @@ void SimpleMqttClientController::perform()
 
 void SimpleMqttClientController::sendTelemetryMessage()
 {
+    // in telemetry message we are sending randomized value in range -10°C to 40°C
     int temperature = (rand() % 50) - 10;
 
     std::string message = "{\"temperature\": " + std::to_string(temperature) + "}";
