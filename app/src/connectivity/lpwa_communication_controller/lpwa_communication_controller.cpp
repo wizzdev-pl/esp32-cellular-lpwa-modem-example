@@ -1,49 +1,50 @@
-static const char *LOG_TAG = "LPWA-Comm-Contr";
+static const char* LOG_TAG = "LPWA-Comm-Contr";
 #define LOG_LOCAL_LEVEL ESP_LOG_INFO
 
 #include "lpwa_communication_controller.h"
 
+#include "common/sleep.h"
 #include "defines.h"
 #include "hardware_definitions.h"
-#include "common/sleep.h"
 
 extern "C"
 {
 #include "driver/gpio.h"
+#include "esp_log.h"
 #include "esp_netif.h"
 #include "esp_netif_defaults.h"
 #include "esp_netif_ppp.h"
 #include "esp_netif_types.h"
-#include "esp_log.h"
 }
 
 #include "cxx_include/esp_modem_api.hpp"
 #include "cxx_include/esp_modem_command_library.hpp"
 
-constexpr int nbIoTBands[] = {1, 20};
-constexpr int lteMBands[] = {3, 20};
-
-void _ipEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void _ipEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(arg);
+    LpwaCommunicationController* pLpwaCommunicationControlller = static_cast<LpwaCommunicationController*>(arg);
     pLpwaCommunicationControlller->ipEventCallback(arg, event_base, event_id, event_data);
 }
 
-void _pppStatusEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void _pppStatusEventCallback(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)
 {
-    LpwaCommunicationController *pLpwaCommunicationControlller = static_cast<LpwaCommunicationController *>(arg);
+    LpwaCommunicationController* pLpwaCommunicationControlller = static_cast<LpwaCommunicationController*>(arg);
     pLpwaCommunicationControlller->pppStatusEventCallback(arg, event_base, event_id, event_data);
 }
 
-void LpwaCommunicationController::ipEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void LpwaCommunicationController::ipEventCallback(
+    void*            arg,
+    esp_event_base_t event_base,
+    int32_t          event_id,
+    void*            event_data)
 {
     // LOG_INFO("Received IP Event: %u", event_id);
     if (event_id == IP_EVENT_PPP_GOT_IP)
     {
         esp_netif_dns_info_t dnsInfo = {};
 
-        ip_event_got_ip_t *event = reinterpret_cast<ip_event_got_ip_t *>(event_data);
-        esp_netif_t *netif = event->esp_netif;
+        ip_event_got_ip_t* event = reinterpret_cast<ip_event_got_ip_t*>(event_data);
+        esp_netif_t*       netif = event->esp_netif;
         esp_netif_get_dns_info(netif, ESP_NETIF_DNS_MAIN, &dnsInfo);
         esp_netif_get_dns_info(netif, ESP_NETIF_DNS_BACKUP, &dnsInfo);
 
@@ -64,7 +65,11 @@ void LpwaCommunicationController::ipEventCallback(void *arg, esp_event_base_t ev
     }
 }
 
-void LpwaCommunicationController::pppStatusEventCallback(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+void LpwaCommunicationController::pppStatusEventCallback(
+    void*            arg,
+    esp_event_base_t event_base,
+    int32_t          event_id,
+    void*            event_data)
 {
     LOG_INFO("NETIF_PPP_STATUS event callback");
 }
@@ -77,9 +82,9 @@ void LpwaCommunicationController::runTask()
     }
 }
 
-void LpwaCommunicationController::run(void *pObject)
+void LpwaCommunicationController::run(void* pObject)
 {
-    LpwaCommunicationController *pLpwaCommunicationController = static_cast<LpwaCommunicationController *>(pObject);
+    LpwaCommunicationController* pLpwaCommunicationController = static_cast<LpwaCommunicationController*>(pObject);
     pLpwaCommunicationController->_run();
 }
 
@@ -123,29 +128,29 @@ void LpwaCommunicationController::init()
     esp_netif_config_t netif_ppp_config = ESP_NETIF_DEFAULT_PPP();
 
     // Create the PPP and DCE objects
-    esp_netif_t *esp_netif = esp_netif_new(&netif_ppp_config);
+    esp_netif_t* esp_netif = esp_netif_new(&netif_ppp_config);
     if (!esp_netif)
     {
         LOG_ERROR("Could not create esp_netif");
         return;
     }
 
-    m_dteConfig = ESP_MODEM_DTE_DEFAULT_CONFIG();
-    m_dteConfig.uart_config.tx_io_num = hardware::LPWA_MODULE_UART_RXD_PIN;
-    m_dteConfig.uart_config.rx_io_num = hardware::LPWA_MODULE_UART_TXD_PIN;
-    m_dteConfig.uart_config.port_num = UART_NUM_1;
-    m_dteConfig.uart_config.baud_rate = LPWA_UART_BAUDRATE;
-    m_dteConfig.uart_config.source_clk = ESP_MODEM_DEFAULT_UART_CLK;
-    m_dteConfig.uart_config.data_bits = LPWA_UART_DATABITS;
-    m_dteConfig.uart_config.stop_bits = LPWA_UART_STOP_BITS;
-    m_dteConfig.uart_config.parity = LPWA_UART_PARITY;
-    m_dteConfig.uart_config.flow_control = LPWA_UART_FLOW_CONTROL;
+    m_dteConfig                              = ESP_MODEM_DTE_DEFAULT_CONFIG();
+    m_dteConfig.uart_config.tx_io_num        = hardware::LPWA_MODULE_UART_RXD_PIN;
+    m_dteConfig.uart_config.rx_io_num        = hardware::LPWA_MODULE_UART_TXD_PIN;
+    m_dteConfig.uart_config.port_num         = UART_NUM_1;
+    m_dteConfig.uart_config.baud_rate        = LPWA_UART_BAUDRATE;
+    m_dteConfig.uart_config.source_clk       = ESP_MODEM_DEFAULT_UART_CLK;
+    m_dteConfig.uart_config.data_bits        = LPWA_UART_DATABITS;
+    m_dteConfig.uart_config.stop_bits        = LPWA_UART_STOP_BITS;
+    m_dteConfig.uart_config.parity           = LPWA_UART_PARITY;
+    m_dteConfig.uart_config.flow_control     = LPWA_UART_FLOW_CONTROL;
     m_dteConfig.uart_config.event_queue_size = LPWA_UART_QUEUE_SIZE;
-    m_dteConfig.uart_config.rx_buffer_size = LPWA_UART_RX_BUFFER_SIZE;
-    m_dteConfig.uart_config.tx_buffer_size = LPWA_UART_TX_BUFFER_SIZE;
+    m_dteConfig.uart_config.rx_buffer_size   = LPWA_UART_RX_BUFFER_SIZE;
+    m_dteConfig.uart_config.tx_buffer_size   = LPWA_UART_TX_BUFFER_SIZE;
 
     m_dteConfig.task_stack_size = LPWA_DTE_STACK_SIZE;
-    m_dteConfig.task_priority = DEFAULT_TASK_PRIORITY;
+    m_dteConfig.task_priority   = DEFAULT_TASK_PRIORITY;
     m_dteConfig.dte_buffer_size = LPWA_DTE_BUFFER_SIZE;
 
     m_dte = esp_modem::create_uart_dte(&m_dteConfig);
@@ -187,19 +192,40 @@ void LpwaCommunicationController::init()
         LOG_ERROR("Could not set baudrate");
     }
 
-    if (m_dce->set_network_bands(std::string("NB-IoT"), nbIoTBands, sizeof(nbIoTBands) / sizeof(nbIoTBands[0])) == esp_modem::command_result::OK)
+    if (m_dce->set_network_bands(
+            std::string(LTE_M_STRING), LTE_M_BANDS, sizeof(LTE_M_BANDS) / sizeof(LTE_M_BANDS[0])) ==
+        esp_modem::command_result::OK)
+    {
+        LOG_INFO("Network bands for LTE-M set successfully");
+    }
+    else
+    {
+        LOG_ERROR("Error while attempting to set network bands for LTE-M");
+    }
+
+    if (m_dce->set_network_bands(
+            std::string(NB_IOT_STRING), NB_IOT_BANDS, sizeof(NB_IOT_BANDS) / sizeof(NB_IOT_BANDS[0])) ==
+        esp_modem::command_result::OK)
     {
         LOG_INFO("Network bands for NB-IoT set successfully");
     }
     else
     {
         LOG_ERROR("Error while attempting to set NB-IoT Bands");
-        return;
+    }
+
+    if (m_dce->set_preferred_mode(PREFERRED_NETWORK_MODE) == esp_modem::command_result::OK)
+    {
+        LOG_INFO("Preferred mode set correctly");
+    }
+    else
+    {
+        LOG_ERROR("Error while attempting to set preferred mode");
     }
 
     // Checking signal
     int bitErrorRate = 0;
-    int rssiValue = 0;
+    int rssiValue    = 0;
 
     if (m_dce->get_signal_quality(rssiValue, bitErrorRate) == esp_modem::command_result::OK)
     {
@@ -234,11 +260,11 @@ void LpwaCommunicationController::powerKeyGpioInit()
 {
     gpio_config_t powerKeyGpioConfig;
 
-    powerKeyGpioConfig.intr_type = static_cast<gpio_int_type_t>(GPIO_INTR_DISABLE);
-    powerKeyGpioConfig.mode = GPIO_MODE_OUTPUT;
+    powerKeyGpioConfig.intr_type    = static_cast<gpio_int_type_t>(GPIO_INTR_DISABLE);
+    powerKeyGpioConfig.mode         = GPIO_MODE_OUTPUT;
     powerKeyGpioConfig.pin_bit_mask = (1ULL << hardware::LPWA_MODULE_POWER_KEY);
     powerKeyGpioConfig.pull_down_en = GPIO_PULLDOWN_DISABLE;
-    powerKeyGpioConfig.pull_up_en = GPIO_PULLUP_DISABLE;
+    powerKeyGpioConfig.pull_up_en   = GPIO_PULLUP_DISABLE;
     gpio_config(&powerKeyGpioConfig);
 }
 
