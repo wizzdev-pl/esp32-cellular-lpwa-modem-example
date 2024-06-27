@@ -13,8 +13,6 @@ extern "C"
 
 class LpwaCommunicationController
 {
-    // constexpr static char APN_NAME[] = "internet.gma.iot";
-
     enum class ENetworkMode
     {
         CAT_M            = 1,
