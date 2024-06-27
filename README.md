@@ -129,3 +129,26 @@ idf.py -B ./ -C $PROJECT_DIR/ menuconfig
 In order to connect with AWS, you need to update `AWS_ENDPOINT_URL`, `AWS_THINGNAME`, `AWS_CLIENT_CERTIFICATE` and `AWS_CLIENT_PRIVATE_KEY` in [app/src/connectivity/aws_configuration.h](app/src/connectivity/aws_configuration.h) according to endpoint url and credentials required for the environment you are trying to connect to.
 
 Please note that file is currently not being tracked, updates made in this file should not be pushed to the repository.
+
+## 5. Switching between LTE-M and NB-IoT
+
+Switching between LTE-M and NB-IoT modes can be done using CMake parameters `USE_NB_IOT` and `USE_LTE_M`, e.g. following command will compile the code to LTE-M variant:
+
+```
+idf.py -B . -p /dev/ttyUSB0 -C $PROJECT_DIR/ -DBUILD_WITH_PRINTS_AND_LOGS=ON -DIS_DEBUG_BUILD=OFF -DUSE_LTE_M=ON -DUSE_NB_IOT=OFF build
+```
+
+and following command will compile the code to NB-IOT variant
+
+```
+idf.py -B . -p /dev/ttyUSB0 -C $PROJECT_DIR/ -DBUILD_WITH_PRINTS_AND_LOGS=ON -DIS_DEBUG_BUILD=OFF -DUSE_LTE_M=OFF -DUSE_NB_IOT=ON build
+```
+
+Please note that:
+
+- at least one connectivity method has to be selected
+- both methods must not be selected at the same time
+
+Otherwise, a compilation error will be generated.
+
+Make sure to update `APN_NAME` for your variants in [CMakeLists.txt](CMakeLists.txt) file if you use different operators as well as `NB_IOT_BANDS` and `LTE_M_BANDS` in [app/src/connectivity/lpwa_communication_controller/lpwa_communication_controller.h](app/src/connectivity/lpwa_communication_controller/lpwa_communication_controller.h) according to the configuration for your operator in your country.
