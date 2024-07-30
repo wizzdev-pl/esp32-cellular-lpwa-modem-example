@@ -55,3 +55,10 @@ GTest coverage
 Misc files
 *.info
 
+.peru
+externals
+build
+
+managed_components
+sdkconfig.old
+app/src/connectivity/aws_configuration.h
